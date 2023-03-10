@@ -3,10 +3,12 @@ import {UserModel} from "./models/user.js";
 import  { check, validationResult } from 'express-validator';
 
 export const logged = async (req, res, next) => {
-  if(req.body?.header){
-    var authHeader = req.body?.header['Authorization'];
+  let authHeader = null;
+  
+  if(req.headers){
+     authHeader = req.headers['authorization'];
   }
-    if (!authHeader) return res.json("Vous n'êtes pas connecté");
+    if (!authHeader) return res.status(401).json({ message: 'Auth failed' });
 
     try {
         const verifToken = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
@@ -43,7 +45,7 @@ export const checkAdmin = (req, res, next) => {
 
 
 export const validateBody = (req, res, next) => {
-    const { email, password, firstname, lastname, country, city, category, gender, birthdate, phone, photo, isAdmin } = req.body;
+    const { email, password, firstName, lastName, country, city, category, gender, birthdate, phone, photo, isAdmin } = req.body;
   
     if (!email || !email.trim()) {
       return res.status(400).json({ message: 'Email is required' });
@@ -53,45 +55,14 @@ export const validateBody = (req, res, next) => {
       return res.status(400).json({ message: 'Email is not valid' });
     }
   
-    if (!firstname || !firstname.trim()) {
+    if (!firstName || !firstName.trim()) {
       return res.status(400).json({ message: 'First name is required' });
     }
   
-    if (!lastname || !lastname.trim()) {
+    if (!lastName || !lastName.trim()) {
       return res.status(400).json({ message: 'Last name is required' });
     }
-  
-    if (!country || !country.trim()) {
-      return res.status(400).json({ message: 'Country is required' });
-    }
-  
-    if (!city || !city.trim()) {
-      return res.status(400).json({ message: 'City is required' });
-    }
-  
-    if (!category || !category.trim()) {
-      return res.status(400).json({ message: 'Category is required' });
-    }
-  
-    if (!gender || !gender.trim()) {
-      return res.status(400).json({ message: 'Gender is required' });
-    }
-  
-    if (!birthdate || !birthdate.trim()) {
-      return res.status(400).json({ message: 'Birthdate is required' });
-    }
-  
-    if (!phone || !phone.trim()) {
-      return res.status(400).json({ message: 'Phone is required' });
-    }
-  
-    if (!photo || !photo.trim()) {
-      return res.status(400).json({ message: 'Photo is required' });
-    }
-  
-    if (typeof isAdmin === 'undefined') {
-      return res.status(400).json({ message: 'isAdmin is required' });
-    }
+
   
     next();
   

@@ -4,7 +4,6 @@ import {verifyPassword,hashPassword} from "../utils/utils.js";
 
 
 export async function login(req, res){
-    console.log(req.body)
     const user = await UserModel.findOne({email: req.body.email });
     if(!user){
         return res.status(400).json({"message":"Cet utilisateur n'existe pas"});
@@ -16,7 +15,7 @@ export async function login(req, res){
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-        req.session.token = token;
+        req.session.token = {token:token , role: user.role, email:user.email};
         
         return res.status(200).json({token:req.session.token,user:user});
     }else{
@@ -41,9 +40,9 @@ export async function register(req, res){
     const newUser = new UserModel({
         email: email,
         password: hashPassword(password),
-        firstName: firstName,
-        lastName: lastName,
-        role: "user"
+        firstname: firstName,
+        lastname: lastName,
+        isAdmin: false
     });
 
     await newUser.save();

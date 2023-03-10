@@ -8,7 +8,7 @@ const ArticleSchema = new Schema({
     comment: Array,
     author:String,
     dateCreate:String,
-    photo:String,
+    photo:Object,
     category:String,
 });
 
